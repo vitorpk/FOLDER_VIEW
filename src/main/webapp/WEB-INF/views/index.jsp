@@ -5,11 +5,12 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Приложение на Java</title>
+	<title>Просмотр каталогов</title>
 	<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/bootstrap.css">
-	<script src="${pageContext.request.contextPath}/static/js/fontawesome-all.js"></script>
-	<script src="${pageContext.request.contextPath}/static/js/jquery.js"></script>
-	<script src="${pageContext.request.contextPath}/static/js/bootstrap.js"></script>
+	<script src="${pageContext.request.contextPath}/static/js/fontawesome-all.min.js"></script>
+	<script src="${pageContext.request.contextPath}/static/js/jquery.min.js"></script>
+	<script src="${pageContext.request.contextPath}/static/js/bootstrap.min.js"></script>
+	<script src="${pageContext.request.contextPath}/static/js/js.cookie.min.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-inverse">

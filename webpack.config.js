@@ -1,9 +1,24 @@
-var babelpolyfill = require('babel-polyfill');
+var axios = require('axios');
+var babelcore = require('@babel/core');
+var babelloader = require('babel-loader');
+var babelpolyfill = require("babel-polyfill");
+var babelpresetenv = require('@babel/preset-env');
+var babelpresetreact = require('@babel/preset-react');
+var cssloader = require('css-loader');
+var jquery = require('jquery');
 var path = require('path');
-var webpack = require('webpack');
+var proptypes = require('prop-types');
+var qs = require('qs');
 var react = require('react');
 var reactdom = require('react-dom');
-var axios = require('axios');
+var reactredux = require('react-redux');
+var reactrouter = require('react-router');
+var routerredux = require('react-router-redux');
+var redux = require('redux');
+var reduxdevtoolsextension = require('redux-devtools-extension');
+var reduxthunk = require('redux-thunk');
+var styleloader = require('style-loader');
+var webpack = require('webpack');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
