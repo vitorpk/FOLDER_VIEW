@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import Nav from '../containers/Nav';
 
 class App extends Component {
   // фаза, когда компонент примонтировался. Выполняет AJAX-запрос на получение списка
@@ -12,7 +13,7 @@ class App extends Component {
 
     return (
       <div>
-        Hello!
+        <Nav />
       </div>
     );
   }
