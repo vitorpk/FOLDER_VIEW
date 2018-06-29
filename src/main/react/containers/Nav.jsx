@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { clearError, clearMessage, getMessage } from '../actions/DataActions';
+import { clearError, clearMessage, getData, getMessage } from '../actions/DataActions';
 
 const CHECK_FOLDER = 'check_folder';
+const GET_DISK_LIST = 'get_disk_list';
+const DISK_LIST_NAME = 'diskList';
 
 class Nav extends Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      warning: ''
+    }
 
     this.folderInput = React.createRef();
 
@@ -19,23 +25,32 @@ class Nav extends Component {
     const store = Cookies.get('store');
     if (store) {
       this.folderInput.current.value = store;
-      this.props.dispatch((getMessage(CHECK_FOLDER, {folder: store})));
+      this.props.dispatch(getMessage(CHECK_FOLDER, {folder: store}));
     }
   }
   
   componentWillReceiveProps(nextProps) {
+    if (!nextProps.process) {
+      const { data, dispatch } = this.props;
+      if (data[DISK_LIST_NAME] === undefined)
+        this.props.dispatch(getData(GET_DISK_LIST, DISK_LIST_NAME));
+    }
     if (nextProps.message == 'OK') {
       const value = this.folderInput.current.value;
       if (value)
         Cookies.set('store', value, { expires: 365 });
+    } else if (nextProps.message != '') {
+      this.setState({warning: nextProps.message});
     }
   }
 
   handleAlertClose(e) {
     if (e.target.id == 'error')
       this.props.dispatch((clearError()));
-    else
+    else {
       this.props.dispatch((clearMessage()));
+      this.setState({warning: ''});
+    }
   }
 
   handleClick(e) {
@@ -47,7 +62,8 @@ class Nav extends Component {
 
   // рендеринг компонента
   render() {
-    const  { error, message } = this.props;
+    const  { data, error } = this.props;
+    const  { warning } = this.state;
 
     let errorComponent = null;
     if (error)
@@ -57,15 +73,44 @@ class Nav extends Component {
           <strong>Ошибка!</strong> {error}
         </div>
       );
-    
     let messageComponent = null;
-    if (message && message != 'OK')
+    if (warning)
       messageComponent = (
         <div className="alert alert-info">
           <a id="message" className="close" onClick={this.handleAlertClose}>&times;</a>
-          <strong>Внимание!</strong> {message}
+          <strong>Внимание!</strong> {warning}
         </div>
       );
+    
+    let diskComponent = null;
+    
+    if (data[DISK_LIST_NAME] == undefined) {
+      diskComponent = (
+        <ul className="nav navbar-nav">
+          <li className="dropdown">
+            <a className="dropdown-toggle" data-toggle="dropdown" href="#">Диск<span className="caret"></span></a>
+            <ul className="dropdown-menu">
+            </ul>
+          </li>
+        </ul>
+      );
+    } else {
+      const diskList = data[DISK_LIST_NAME].map(function(item, index) {
+        return (
+          <li key={index}><a href="#">{item.name}</a></li>
+        );
+      });
+      diskComponent = (
+        <ul className="nav navbar-nav">
+          <li className="dropdown">
+            <a className="dropdown-toggle" data-toggle="dropdown" href="#">Диск<span className="caret"></span></a>
+            <ul className="dropdown-menu">
+              {diskList}
+            </ul>
+          </li>
+        </ul>
+      );
+    }
 
     return (
       <nav className="navbar navbar-inverse">
@@ -83,6 +128,7 @@ class Nav extends Component {
               </div>
             </div>
           </form>
+          {diskComponent}
         </div>
         {errorComponent}
         {messageComponent}
@@ -93,6 +139,7 @@ class Nav extends Component {
 
 function mapStateToProps (state) {
   return {
+    data: state.DataReducer.data,
     error: state.DataReducer.error,
     message: state.DataReducer.message,
     process: state.DataReducer.process

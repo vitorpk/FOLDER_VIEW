@@ -25,7 +25,9 @@ export default function ( state = initialState, action ) {
     case CLEAR_MESSAGE:
       return updateObject(state, {message: '' });
     case SET_DATA:
-      return updateObject(state, {data: action.data, process: false});
+      let data = state.data;
+      data[action.name] = action.data;
+      return updateObject(state, {data: data, process: false});
     case SET_ERROR:
     const { error } = action;
     if (error.response.status === 400)
@@ -35,7 +37,7 @@ export default function ( state = initialState, action ) {
     case SET_MESSAGE:
       return updateObject(state, {message: action.message, process: false});
     case SET_PROCESS:
-      return updateObject(state, {process: false, error: '', message: '', status: 0, statusText: ''});
+      return updateObject(state, {process: true, error: '', message: '', status: 0, statusText: ''});
     // case CLEAR_DATA:
     //   return updateObject(state, {data: {}, processing: false, saved: false});
     // case GET_DATA:

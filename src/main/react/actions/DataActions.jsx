@@ -33,7 +33,7 @@ export function clearMessage() {
   }
 };
 
-export function getData(path, params) {
+export function getData(path, name, params) {
   return dispatch => {
     dispatch( { type: SET_PROCESS } );
 
@@ -41,7 +41,7 @@ export function getData(path, params) {
       params: params
     } )
     .then( result => {
-      dispatch( { type: SET_DATA, data: result.data } );
+      dispatch( { type: SET_DATA, name: name, data: result.data } );
     } )
     .catch( error => {
       dispatch( { type: SET_ERROR, error: error } );
