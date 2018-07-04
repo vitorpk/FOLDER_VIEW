@@ -9,7 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
@@ -23,18 +26,36 @@ public class TestReadDirs {
 		FolderService folderService = new FolderService();
 		
 		folderService.initFolderList();
-		folderService.setFolderList("C:\\TEMP");
+		folderService.setFolderList("C:\\Temp");
 		
-		Map<String, Folder> folderList = folderService.getFolderList();
+		Map<String, Folder> folderMap = folderService.getFolderList();
+		List<Folder> folderList = new ArrayList<Folder>();
 		
-		//System.out.println(folderList);
-		
-		for (Map.Entry<String, Folder> entry : folderList.entrySet()) {
+		for (Map.Entry<String, Folder> entry : folderMap.entrySet()) {
 			Folder folder = entry.getValue();
-			System.out.println(entry.getKey());
-			System.out.println("    " + folder.getName());
-			System.out.println("    " + folder.getParent());
-			System.out.println("    " + folder.getSize());
+			//System.out.println(entry.getKey() + ", size = " + folder.getSize());
+			folderList.add(folder);
+			//System.out.println("    " + folder.getName());
+			//System.out.println("    " + folder.getParent());
+			//System.out.println("    " + folder.getSize());
+		}
+		
+		folderList.sort(new Comparator<Folder>() {
+		    public int compare(Folder folder1, Folder folder2) {
+		    	String path1 = folder1.getPath();
+		    	String path2 = folder2.getPath();
+		    	if (path1.equals(path2))
+		    		return 0;
+		    	else if (path1.compareToIgnoreCase(path2) > 0)
+		    		return 1;
+		    	else
+		    		return -1;
+		    }
+		});
+		
+		for (Folder folder : folderList) {
+			if (folder.getPath().indexOf("\\", 8) < 0)
+				System.out.println(folder.getPath() + "\t" + folder.getSize());
 		}
 	}
 

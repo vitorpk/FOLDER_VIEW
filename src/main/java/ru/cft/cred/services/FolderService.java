@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import ru.cft.cred.entities.Folder;
@@ -17,9 +17,14 @@ import ru.cft.cred.entities.Folder;
 @Service
 public class FolderService {
 	
+	private final Logger logger = LoggerFactory.getLogger(FolderService.class);
+	
 	Map<String, Folder> folderList = new HashMap<String, Folder>();
 
 	public String checkFolder(String folder) {
+		
+		if (logger.isInfoEnabled()) logger.info("checkFolder: folder = " + folder);
+		
 		if (StringUtils.isEmpty(folder))
 			return "Пустое имя каталога";
 		
@@ -46,10 +51,9 @@ public class FolderService {
 	
 	public void setFolderList(String path) {
 		
-		//System.out.println("path = " + path);
-
-		//List<Folder> folderList = new ArrayList<Folder>();
-		//Map<String, Folder> folderList = new HashMap<String, Folder>();
+		boolean isInfoEnabled = logger.isInfoEnabled();
+		
+		if (isInfoEnabled) logger.info("setFolderList: path = " + path);
 
 		File file = new File(path);
 		String absolutePath = file.getAbsolutePath();
@@ -57,15 +61,21 @@ public class FolderService {
 		String fileName = filePath.getFileName().toString();
 		String realPath = getRealPath(filePath);
 		
-		if (!folderList.containsKey(realPath))
+		if (isInfoEnabled) logger.info("setFolderList: fileName = " + fileName + ", realPath = " + realPath);
+		
+		if (!folderList.containsKey(realPath)) {
 			folderList.put(realPath, Folder.builder()
 					.name(fileName)
 					.parent("")
 					.path(realPath)
 					.size(0)
 					.build());
+			if (isInfoEnabled) logger.info("setFolderList:     + folder " + realPath);
+		}
 
 		File[] fileList = file.listFiles();
+		
+		if (isInfoEnabled) logger.info("setFolderList: fileList.length = " + (fileList == null ? "null" : fileList.length));
 		
 		if (fileList != null) {
 			for (int j = 0; j < fileList.length; j++) {
@@ -76,50 +86,40 @@ public class FolderService {
 				realPath = getRealPath(filePath);
 				String parentPath = getParentPath(filePath);
 				
+				if (isInfoEnabled) logger.info("setFolderList:   fileName = " + fileName);
+				if (isInfoEnabled) logger.info("setFolderList:     realPath = " + realPath);
+				if (isInfoEnabled) logger.info("setFolderList:     absolutePath = " + absolutePath);
+				if (isInfoEnabled) logger.info("setFolderList:     parentPath = " + parentPath);
+				if (isInfoEnabled) logger.info("setFolderList:     isDirectory = " + fileInList.isDirectory());
+				
 				if (realPath.equals(absolutePath)) {
-					if (fileList[j].isDirectory()) {
-						//System.out.println(realPath + " " + parentPath);
+					if (fileInList.isDirectory()) {
 						folderList.put(realPath, Folder.builder()
 								.name(fileName)
 								.parent(parentPath)
 								.path(realPath)
 								.size(0)
 								.build());
-						//System.out.println(realPath);
-						/*folderList.add(Folder.builder()
-								.name(.getFileName())
-								.path(realPath)
-								.build());*/
+						if (isInfoEnabled) logger.info("setFolderList:     + folder " + realPath);
 						setFolderList(absolutePath);
 					} else {
 						long size = fileInList.length();
-						//System.out.println(size + " " + parentPath);
+						if (isInfoEnabled) logger.info("setFolderList:     size = " + size);
 						if (size != 0 && folderList.containsKey(parentPath)) {
+							if (isInfoEnabled) logger.info("setFolderList:     set size");
 							Folder folder = folderList.get(parentPath);
-							//folder.setSize(folder.getSize() + size);
-							parentPath = String.valueOf(folder.getParent());
 							while (parentPath != "") {
 								folder = folderList.get(parentPath);
 								folder.setSize(folder.getSize() + size);
 								parentPath = folder.getParent();
 							}
-							//System.out.println(size + " " + parentPath + " " + fileName);
-							//System.out.println(folder);
-							//folderList.put(parentPath, folder);
 						}
-						/*folderList.add(Folder.builder()
-								.name(.getFileName())
-								.path(realPath)
-								.build());*/
-						//Path newLink3 = Paths.get("C:\\Documents and Settings");
 					}
 				} else {
-					//System.out.println("diff " + absolutePath);
+					if (isInfoEnabled) logger.info("setFolderList:     other way");
 				}
 			}
 		}
-		
-		//System.out.println(folderList);
 	}
 	
 	public void initFolderList() {

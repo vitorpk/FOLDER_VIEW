@@ -10,10 +10,16 @@
 		</layout>
 	</appender>
 	
-	<!-- Application Loggers -->
-	<logger name="ru.cft.cred">
-		<level value="info" />
-	</logger>
+    <appender name="file" class="org.apache.log4j.RollingFileAppender">
+       <param name="append" value="false" />
+       <param name="maxFileSize" value="10MB" />
+       <param name="maxBackupIndex" value="3" />
+       <!-- For Tomcat -->
+       <param name="file" value="debug.log" />
+       <layout class="org.apache.log4j.PatternLayout">
+        <param name="ConversionPattern" value="%-5p: %c - %m%n" />
+       </layout>
+    </appender>
 	
 	<!-- 3rdparty Loggers -->
 	<logger name="org.springframework.core">
@@ -34,8 +40,8 @@
 
 	<!-- Root Logger -->
 	<root>
-		<priority value="info" />
-		<appender-ref ref="console" />
+		<priority value="warn" />
+		<appender-ref ref="file" />
 	</root>
 	
 </log4j:configuration>
