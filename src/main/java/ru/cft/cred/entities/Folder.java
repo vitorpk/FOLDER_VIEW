@@ -5,8 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class Dir {
+public class Folder {
 	private String name;
 	private String path;
+	private String parent;
 	private long size;
 }
