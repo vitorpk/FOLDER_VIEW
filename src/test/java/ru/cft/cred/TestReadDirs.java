@@ -21,12 +21,13 @@ import ru.cft.cred.entities.Folder;
 import ru.cft.cred.services.FolderService;
 
 public class TestReadDirs {
+	private final static String INIT_DIR = "C:\\";
 
 	public static void main(String[] args) throws IOException {
 		FolderService folderService = new FolderService();
 		
 		folderService.initFolderList();
-		folderService.setFolderList("C:\\Temp");
+		folderService.setFolderList(INIT_DIR);
 		
 		Map<String, Folder> folderMap = folderService.getFolderList();
 		List<Folder> folderList = new ArrayList<Folder>();
@@ -40,7 +41,7 @@ public class TestReadDirs {
 			//System.out.println("    " + folder.getSize());
 		}
 		
-		folderList.sort(new Comparator<Folder>() {
+		/*folderList.sort(new Comparator<Folder>() {
 		    public int compare(Folder folder1, Folder folder2) {
 		    	String path1 = folder1.getPath();
 		    	String path2 = folder2.getPath();
@@ -51,10 +52,11 @@ public class TestReadDirs {
 		    	else
 		    		return -1;
 		    }
-		});
+		});*/
 		
 		for (Folder folder : folderList) {
-			if (folder.getPath().indexOf("\\", 8) < 0)
+			if (folder.getParent().equals(INIT_DIR) || folder.getPath().equals(INIT_DIR))
+			//if (folder.getPath().indexOf("\\", 8) < 0)
 				System.out.println(folder.getPath() + "\t" + folder.getSize());
 		}
 	}

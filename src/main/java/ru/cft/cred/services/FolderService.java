@@ -19,7 +19,9 @@ public class FolderService {
 	
 	private final Logger logger = LoggerFactory.getLogger(FolderService.class);
 	
-	Map<String, Folder> folderList = new HashMap<String, Folder>();
+	private Map<String, Folder> folderList = new HashMap<String, Folder>();
+	
+	private long numProc;
 
 	public String checkFolder(String folder) {
 		
@@ -58,7 +60,9 @@ public class FolderService {
 		File file = new File(path);
 		String absolutePath = file.getAbsolutePath();
 		Path filePath = Paths.get(absolutePath);
-		String fileName = filePath.getFileName().toString();
+		String fileName = file.getName();
+		if (fileName.equals(""))
+			fileName = file.getPath();
 		String realPath = getRealPath(filePath);
 		
 		if (isInfoEnabled) logger.info("setFolderList: fileName = " + fileName + ", realPath = " + realPath);
@@ -79,18 +83,23 @@ public class FolderService {
 		
 		if (fileList != null) {
 			for (int j = 0; j < fileList.length; j++) {
+				numProc++;
+				if (numProc % 1000 == 0)
+					System.out.println(numProc);
 				File fileInList = fileList[j];
 				absolutePath = fileInList.getAbsolutePath();
 				filePath = Paths.get(absolutePath);
 				fileName = filePath.getFileName().toString();
 				realPath = getRealPath(filePath);
-				String parentPath = getParentPath(filePath);
+				String parentPath = getRealPath(filePath.getParent());
 				
-				if (isInfoEnabled) logger.info("setFolderList:   fileName = " + fileName);
-				if (isInfoEnabled) logger.info("setFolderList:     realPath = " + realPath);
-				if (isInfoEnabled) logger.info("setFolderList:     absolutePath = " + absolutePath);
-				if (isInfoEnabled) logger.info("setFolderList:     parentPath = " + parentPath);
-				if (isInfoEnabled) logger.info("setFolderList:     isDirectory = " + fileInList.isDirectory());
+				if (isInfoEnabled) {
+					logger.info("setFolderList:   fileName = " + fileName);
+					logger.info("setFolderList:     realPath = " + realPath);
+					logger.info("setFolderList:     absolutePath = " + absolutePath);
+					logger.info("setFolderList:     parentPath = " + parentPath);
+					logger.info("setFolderList:     isDirectory = " + fileInList.isDirectory());
+				}
 				
 				if (realPath.equals(absolutePath)) {
 					if (fileInList.isDirectory()) {
@@ -124,26 +133,12 @@ public class FolderService {
 	
 	public void initFolderList() {
 		folderList.clear();
-	}
-	
-	private String getParentPath(Path filePath) {
-		try {
-			Path path = filePath.getParent();
-			if (path == null)
-				return "";
-			path = path.toRealPath();
-			if (path == null)
-				return "";
-			path = path.toAbsolutePath();
-			if (path == null)
-				return "";
-			return path.toString();
-		} catch (IOException e) {
-			return "";
-		}
+		numProc = 0;
 	}
 	
 	private String getRealPath(Path filePath) {
+		if (filePath == null)
+			return "";
 		try {
 			Path path = filePath.toRealPath();
 			if (path == null)

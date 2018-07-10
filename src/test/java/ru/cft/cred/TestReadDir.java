@@ -17,10 +17,25 @@ public class TestReadDir {
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		Path newLink = Paths.get("C:\\Documents and Settings\\user\\web.xml");
-		Path newLink2 = Paths.get("C:\\Users\\user\\web.xml");
+		Path newLink = Paths.get("C:\\Documents and Settings\\babiiv\\web.xml");
+		Path newLink2 = Paths.get("C:\\Users\\babiiv\\web.xml");
 		Path newLink3 = Paths.get("C:\\Documents and Settings");
 		Path newLink5 = Paths.get("C:\\");
+		File file = new File("C:\\");
+		File file2 = new File("C:\\Users\\babiiv\\web.xml");
+		File file3 = new File("C:\\Users");
+		String name = file.getName();
+		System.out.println(name);
+		if (name.equals("")) {
+			name = file.getPath();
+			System.out.println("!");
+		}
+		System.out.println(file.isDirectory());
+		System.out.println(name);
+		System.out.println(file.getPath());
+		System.out.println(file2.getName());
+		System.out.println(file3.getPath());
+		System.out.println(newLink5.getFileName());
 		System.out.println(newLink5.toRealPath().getParent());
 		System.out.println(newLink2.toRealPath().getParent().toRealPath());
 		System.out.println(newLink.toRealPath());
